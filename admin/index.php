@@ -4,18 +4,16 @@ session_start();
 //Include functions.inc.php - admin functions only
 require_once('include/functions.inc.php');
 db_connect();
-exit();
 if($_GET['page'] == 'logout')
 {
     $_SESSION['admin_login'] = 'no';
 }
 
 //admin part
-print_r($_SESSION);
+
 //process login part
 if($_SESSION['admin_login'] != 'yes')
 {
-    
     if(!isset($_POST['login_btn']) || empty($_POST['login_name']))
     {
     echo "<form id='login_form' name='login_form' method='POST' action='".$_SERVER['PHP_SELF']."'>";
@@ -26,8 +24,12 @@ if($_SESSION['admin_login'] != 'yes')
     }
     else
     {
+        $username = mysql_real_escape_string($_POST['login_name']);
+        $password = md5(mysql_real_escape_string($_POST['login_password']));
         
-        if($_POST['login_name'] == 'test' && $_POST['login_password'] == 'test')
+        $query_login = mysql_query('SELECT * FROM user WHERE user_name = "'.$username.'" AND user_pass = "'.$password.'";');
+        $check = mysql_num_rows($query_login);
+        if($check > 0)
         {
             $_SESSION['admin_login'] = 'yes';
         }
